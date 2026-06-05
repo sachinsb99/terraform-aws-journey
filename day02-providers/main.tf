@@ -1,28 +1,13 @@
-resource "aws_s3_bucket" "first_bucket" {
-  # bucket name must be globally unique across ALL of AWS
-  bucket = "terraform-learning-day01-yourname-2024"
-
-  tags = {
-    Name        = "TerraformFirstBucket"
-    Environment = "Learning"
-    Day         = "Day01"
-  }
+resource "random_id" "bucket_suffix" {
+  byte_length = 4
 }
-resource "aws_s3_bucket" "log_bucket" {
-  bucket = "terraform-learning-logs-yourname-2024"
+
+# S3 bucket in primary region (us-east-1)
+resource "aws_s3_bucket" "primary_bucket" {
+  bucket = "tf-learn-primary-${random_id.bucket_suffix.hex}"
   
   tags = {
-    Name    = "LogBucket"
-    Purpose = "Logging"
+    Name   = "PrimaryBucket"
+    Region = "ap-south-1"
   }
-}
-
-# Block public access on the bucket (best practice)
-resource "aws_s3_bucket_public_access_block" "first_bucket_pab" {
-  bucket = aws_s3_bucket.first_bucket.id
-
-  block_public_acls       = true
-  block_public_policy     = true
-  ignore_public_acls      = true
-  restrict_public_buckets = true
 }
